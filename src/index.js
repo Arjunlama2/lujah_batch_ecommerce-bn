@@ -1,5 +1,5 @@
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({quiet:true});
 const mongoose = require("mongoose");
 const app = require("./app");
 
