@@ -7,13 +7,14 @@ const userSchema=mongoose.Schema({
     username:{
         type:String,
         required:true
+        
     },
     email:{
         type:String,
         required:true,
-        validate:{
+        // validate:{
             // validator
-        }
+        // }
     },
     password:{
         type:String,
@@ -25,7 +26,7 @@ const userSchema=mongoose.Schema({
     },
     role:{
         type:String,
-        enum:["buyer","Seller"],
+        enum:["buyer","seller"],
         default:"buyer"
     }
 })
