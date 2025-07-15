@@ -24,13 +24,14 @@ const productSchema = Joi.object({
     .items(Joi.string().trim().max(30))
     .unique() // no duplicate sizes like ["M","M"]
     .optional(),
+    
 });
 
 
 
 const getAllProducts=async(req,res,next)=>{
     try{
-        const products=await Product.find()
+        const products=await Product.find().populate("category")
         res.status(200).send(products)
     }catch(err){
         next(err)
@@ -50,13 +51,17 @@ const getSingleProduct=async(req,res,next)=>{
 
 const createProduct=async(req,res,next)=>{
     try{
-        const {error,value}=productSchema.validate(req.body)
+        const {error,value}=productSchema.validate(req.body,{
+          allowUnknown:true,
+        })
         if(!error){
             const product=await Product.create(value)
             res.status(200).send({
                 messages:"product created successfully",
                 product
             })
+        }else{
+          throw new Error(error.details[0])
         }
     }catch(err){
         next(err)

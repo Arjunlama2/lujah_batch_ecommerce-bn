@@ -19,3 +19,4 @@ router.patch("/:id",isAuthenticated,isSeller,updateProduct);
 router.delete("/:id",isAuthenticated,isSeller,deleteProduct);
 
 module.exports = router;
+ 

@@ -6,6 +6,7 @@ const { handleError } = require("./middleware/error");
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1",routes)
+
 app.use(handleError)
 
 

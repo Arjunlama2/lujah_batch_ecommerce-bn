@@ -29,6 +29,8 @@ const productSchema=mongoose.Schema({
     size:{
         type:[String]
 
+    },color:{
+        type:String
     }
  
 })
