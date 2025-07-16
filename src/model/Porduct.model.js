@@ -31,6 +31,11 @@ const productSchema=mongoose.Schema({
 
     },color:{
         type:String
+    },
+    productOf:{
+     type:mongoose.Types.ObjectId,
+        ref:"User"
+
     }
  
 })

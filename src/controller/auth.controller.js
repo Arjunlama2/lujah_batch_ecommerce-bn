@@ -36,7 +36,7 @@ const signup = async (req, res, next) => {
 
     const { error, value } = UserSchema.validate(userData, {});
     if (!error) {
-      console.log(value);
+     
       const hashedPassword = await bcrypt.hash(value.password, 10);
       value.password = hashedPassword;
       const user = await User.create(value);

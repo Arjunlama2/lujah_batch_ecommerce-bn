@@ -9,6 +9,7 @@ const userRouter=require("./user.router")
 
 const productRouter=require("./product.router")
 const categoryRouter=require("./category.router")
+const orderROuter=require("./order.router")
 
 
 const routers=[
@@ -23,6 +24,9 @@ const routers=[
       {
         path:"/category",
         Router:categoryRouter
+    },  {
+        path:"/order",
+        Router:orderROuter
     },
    
 ]

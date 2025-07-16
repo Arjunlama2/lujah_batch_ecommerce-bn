@@ -51,6 +51,7 @@ const getSingleProduct=async(req,res,next)=>{
 
 const createProduct=async(req,res,next)=>{
     try{
+      req.body.productOf=new mongoose.Types.ObjectId(req.user._id)
         const {error,value}=productSchema.validate(req.body,{
           allowUnknown:true,
         })
