@@ -57,6 +57,9 @@ const getOwnOrder = async (req, res, next) => {
   }
 };
 
+// completeorder-seller
+//cancel order-buyer
+
 module.exports ={
 
     getOwnOrder,

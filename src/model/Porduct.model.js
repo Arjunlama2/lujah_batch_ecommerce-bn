@@ -36,6 +36,9 @@ const productSchema=mongoose.Schema({
      type:mongoose.Types.ObjectId,
         ref:"User"
 
+    },
+    image:{
+        type:String
     }
  
 })

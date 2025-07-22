@@ -19,7 +19,7 @@ const productSchema = Joi.object({
   description: Joi.string().trim().max(500).optional(),
 
   brand: Joi.string().trim().max(60).optional(),
-
+image:Joi.string(),
   size: Joi.array()
     .items(Joi.string().trim().max(30))
     .unique() // no duplicate sizes like ["M","M"]
@@ -50,8 +50,10 @@ const getSingleProduct=async(req,res,next)=>{
 
 
 const createProduct=async(req,res,next)=>{
+ 
     try{
       req.body.productOf=new mongoose.Types.ObjectId(req.user._id)
+      req.body.image=req.file.path
         const {error,value}=productSchema.validate(req.body,{
           allowUnknown:true,
         })
@@ -62,7 +64,7 @@ const createProduct=async(req,res,next)=>{
                 product
             })
         }else{
-          throw new Error(error.details[0])
+          throw error
         }
     }catch(err){
         next(err)

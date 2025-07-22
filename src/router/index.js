@@ -1,43 +1,35 @@
+const express = require("express");
 
+const router = express.Router();
 
-const express=require("express")
+const { Router } = require("express");
+const userRouter = require("./user.router");
 
-const router=express.Router()
+const productRouter = require("./product.router");
+const categoryRouter = require("./category.router");
+const orderROuter = require("./order.router");
 
-const { Router } = require("express")
-const userRouter=require("./user.router")
+const routers = [
+  {
+    path: "/user",
+    Router: userRouter,
+  },
+  {
+    path: "/product",
+    Router: productRouter,
+  },
+  {
+    path: "/category",
+    Router: categoryRouter,
+  },
+  {
+    path: "/order",
+    Router: orderROuter,
+  },
+];
 
-const productRouter=require("./product.router")
-const categoryRouter=require("./category.router")
-const orderROuter=require("./order.router")
+routers.map((el) => {
+  router.use(el.path, el.Router);
+});
 
-
-const routers=[
-    {
-        path:"/user",
-        Router:userRouter
-    },
-       {
-        path:"/product",
-        Router:productRouter
-    },
-      {
-        path:"/category",
-        Router:categoryRouter
-    },  {
-        path:"/order",
-        Router:orderROuter
-    },
-   
-]
-
-
-routers.map((el)=>{
-router.use(el.path,el.Router)
-})
-
-
-
-
-
-module.exports=router
+module.exports = router;
