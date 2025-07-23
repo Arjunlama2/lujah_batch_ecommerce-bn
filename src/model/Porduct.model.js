@@ -38,7 +38,7 @@ const productSchema=mongoose.Schema({
 
     },
     image:{
-        type:String
+        type:[String]
     }
  
 })

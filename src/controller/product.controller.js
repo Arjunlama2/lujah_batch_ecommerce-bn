@@ -2,7 +2,8 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Product = require("../model/Porduct.model");
-const  mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const { deleteImage } = require("../utils/deleteImage");
 const productSchema = Joi.object({
   title: Joi.string().trim().min(2).max(120).required(),
 
@@ -19,95 +20,92 @@ const productSchema = Joi.object({
   description: Joi.string().trim().max(500).optional(),
 
   brand: Joi.string().trim().max(60).optional(),
-image:Joi.string(),
+  image: Joi.array().items(Joi.string()),
   size: Joi.array()
     .items(Joi.string().trim().max(30))
     .unique() // no duplicate sizes like ["M","M"]
     .optional(),
-    
 });
 
+const getAllProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find().populate("category");
+    res.status(200).send(products);
+  } catch (err) {
+    next(err);
+  }
+};
 
+const getSingleProduct = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const productDetails = await Product.findOne(id);
+    res.status(200).send(productDetails);
+  } catch (err) {
+    next(err);
+  }
+};
 
-const getAllProducts=async(req,res,next)=>{
-    try{
-        const products=await Product.find().populate("category")
-        res.status(200).send(products)
-    }catch(err){
-        next(err)
+const createProduct = async (req, res, next) => {
+  try {
+    req.body.productOf = new mongoose.Types.ObjectId(req.user._id);
+ req.body.image=[]
+    req.files.map((el) => {
+      req.body.image.push(el.path);
+    });
+    const { error, value } = productSchema.validate(req.body, {
+      allowUnknown: true,
+      abortEarly: false,
+    });
+    if (!error) {
+      const product = await Product.create(value);
+      res.status(200).send({
+        messages: "product created successfully",
+        product,
+      });
+    } else {
+      throw error;
     }
-}
-
-const getSingleProduct=async(req,res,next)=>{
-    try{
-        const id=new mongoose.Types.ObjectId(req.params.id)
-      const productDetails=await Product.findOne(id)
-      res.status(200).send(productDetails)
-    }catch(err){
-        next(err)
+  } catch (err) {
+    if (req.file) {
+      deleteImage(req.file.path);
+    } else if (req.files) {
+      req.files.map((el) => {
+        deleteImage(el.path);
+      });
     }
-}
+    next(err);
+  }
+};
 
-
-const createProduct=async(req,res,next)=>{
- 
-    try{
-      req.body.productOf=new mongoose.Types.ObjectId(req.user._id)
-      req.body.image=req.file.path
-        const {error,value}=productSchema.validate(req.body,{
-          allowUnknown:true,
-        })
-        if(!error){
-            const product=await Product.create(value)
-            res.status(200).send({
-                messages:"product created successfully",
-                product
-            })
-        }else{
-          throw error
-        }
-    }catch(err){
-        next(err)
+const updateProduct = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const { error, value } = productSchema.valid(req.body);
+    if (!error) {
+      const data = Product.findOneAndUpdate(id, value);
+      res.status(200).send(data);
     }
-}
+  } catch (err) {
+    next(err);
+  }
+};
 
+const deleteProduct = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
 
-const updateProduct=async (req,res,next)=>{
-      try{
-        const id=new mongoose.Types.ObjectId(req.params.id)
-      const {error,value}=productSchema.valid(req.body)
-      if(!error){
-        const data=Product.findOneAndUpdate(id,value)
-        res.status(200).send(data)
-      }
-      }catch(err){
-        next(err)
-      }
+    await Product.findOneAndDelete(id);
+    res.status(200).send("Product Deleted successfully");
+  } catch (err) {
+    next(err);
+  }
+};
 
-}
-
-
-const deleteProduct=async (req,res,next)=>{
-      try{
-        const id=new mongoose.Types.ObjectId(req.params.id)
-      
-        await Product.findOneAndDelete(id)
-        res.status(200).send("Product Deleted successfully" )
-      
-      }catch(err){
-        next(err)
-      }
-
-}
-
-
-
-
-
-module.exports={
-    createProduct,
-    getAllProducts,
-    getSingleProduct,
-    updateProduct,
-    deleteProduct
-}
+module.exports = {
+  createProduct,
+  getAllProducts,
+  getSingleProduct,
+  updateProduct,
+  deleteProduct,
+};

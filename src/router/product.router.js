@@ -12,7 +12,7 @@ const upload = require("../utils/multer");
 const router = express.Router();
 
 router.get("/", getAllProducts);
-router.post("/", isAuthenticated, isSeller,upload.single("image"), createProduct);
+router.post("/", isAuthenticated, isSeller,upload.array("image"), createProduct);
 
 
 router.get("/:id",getSingleProduct );
